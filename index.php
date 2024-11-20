@@ -1,18 +1,19 @@
 <?php
 
 // Inclua a classe Nfe corretamente
-require_once __DIR__ . '/class/Nfe.php'; 
+require_once __DIR__ . '/core/Nfe.php'; 
 
 // Use o namespace correto da classe Nfe
-use Nfe\Nfe;
 
 try {
     
-    $xmlContent = file_get_contents(__DIR__ . '../aprocessar/31241125686353000118550030001655651118036595.xml');    
+    $xmlContent = file_get_contents(__DIR__ . '../aprocessar/exemplo.xml');    
     
     $nfe = new Nfe($xmlContent);
+
+    var_dump($nfe);
     
-    var_dump($nfe->CNPJ->getContent());    
+    /* var_dump($nfe->CNPJ->getContent());    
 
     var_dump($nfe->emit->getContent()); 
 
@@ -24,10 +25,18 @@ try {
 
     var_dump($nfe->infdsadsadadsNFae->getContent());
 
-    var_dump($nfe->NFe->getContent());
+    var_dump($nfe->NFe->getContent()); */
+
+    //var_dump($nfe->emit->CNPJ);
     
 
 } catch (Exception $e) {
     // Captura e exibe o erro
     echo "Erro: " . $e->getMessage();
+}
+
+if ($nfe->emit->CNPJ == '12345678000195') {
+    echo 'CNPJ OK';
+} else {
+    echo 'CNPJ ERROR';
 }

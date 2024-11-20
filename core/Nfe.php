@@ -1,14 +1,18 @@
 <?php
 
-namespace Nfe;
+include __DIR__ . '/Emit.php';
 
 class Nfe
 {
     private $xml;
     private $tagMap;
+    public $emit;
 
     public function __construct($xmlContent)
-    {
+    {        
+        $this->emit = new Emit($xmlContent);
+        var_dump($this->emit);
+
         if (empty($xmlContent)) {
             throw new Exception("XML vazio ou inválido.");
         }
@@ -86,26 +90,41 @@ class NfeTag
      */
     public function getContent()
     {
-        // Verifica se a tag tem conteúdo
         if ($this->content === null) {
-            return "dado não existe no XML"; // Retorna a mensagem se não existir conteúdo
+            return "dado não existe no XML";
         }
 
-        // Se a tag contém outras tags (subelementos)
         if ($this->content->count() > 0) {
             $result = [];
+            $childCount = [];
+
             foreach ($this->content->children() as $child) {
                 $childName = $child->getName();
 
-                // Adiciona cada subelemento ao array, chamando NfeTag para manter a estrutura dinâmica
-                $result[$childName] = (new NfeTag($child))->getContent();
+                // Se não existe contador, inicializamos
+                if (!isset($childCount[$childName])) {
+                    $childCount[$childName] = 0;
+                }
+                $childCount[$childName]++;
+
+                // Lógica para múltiplas ocorrências
+                if ($childCount[$childName] > 1) {
+                    if (!isset($result[$childName]) || !is_array($result[$childName])) {
+                        $result[$childName] = [$result[$childName]] ?? [];
+                    }
+                    $result[$childName][] = (new NfeTag($child))->getContent();
+                } else {
+                    $result[$childName] = (new NfeTag($child))->getContent();
+                }
             }
+
             return $result;
         }
 
-        // Se não houver subelementos, retorna o valor simples como string
+        // Para elementos simples (sem filhos)
         return (string)$this->content;
     }
+
 
     /**
      * Retorna uma subtag específica, se existir
