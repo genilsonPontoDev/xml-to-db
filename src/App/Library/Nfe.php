@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__ . '/Emit.php';
+namespace App\Library;
 
 class Nfe
 {
