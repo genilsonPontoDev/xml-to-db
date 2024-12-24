@@ -2,152 +2,68 @@
 
 namespace App\Dto;
 
-use App\Dto\Emit;
+use App\Model\Emitente;  // Importa a model Emitente
+use Exception;
 
 class Nfe
 {
     private $xml;
-    private $tagMap;
     public $emit;
 
     public function __construct($xmlContent)
     {        
-        $this->emit = new Emit($xmlContent);
-        var_dump($this->emit);
-
         if (empty($xmlContent)) {
             throw new Exception("XML vazio ou inválido.");
         }
-
+        
+        // Carrega o XML e valida se é bem formado
         $this->xml = simplexml_load_string($xmlContent);
-
+        
         if (!$this->xml) {
             throw new Exception("Erro ao processar o XML.");
         }
+        
+        // Extrai a parte do XML relacionada ao Emitente
+        $emitXml = $this->extractXmlPart('Emitente');
+        
+        if ($emitXml) {
+            $this->emit = new Emit($emitXml);        
 
-        // Mapeia todas as tags no XML para acesso direto
-        $this->tagMap = [];
-        $this->mapTags($this->xml);
-    }
+            // Passa os dados para a Model Emitente
+            $emitenteModel = new Emitente();
+            $dados = [
+                'nome' => $this->emit->xNome,
+                'cnpj' => $this->emit->CNPJ,
+                'logradouro' => $this->emit->enderEmit['xLgr'],
+                'numero' => $this->emit->enderEmit['nro'],
+                'bairro' => $this->emit->enderEmit['xBairro'],
+                'cidade' => $this->emit->enderEmit['xCidade'],
+                'estado' => $this->emit->enderEmit['xEstado'],
+                'cep' => $this->emit->enderEmit['CEP']
+            ];
 
-    /**
-     * Método recursivo para mapear todas as tags e suas posições no XML
-     */
-    private function mapTags($element, $path = [])
-    {
-        foreach ($element->children() as $child) {
-            $tagName = $child->getName();
-            $currentPath = array_merge($path, [$tagName]);
-
-            // Armazena o elemento completo no mapa, com a tag como chave
-            if (!isset($this->tagMap[$tagName])) {
-                $this->tagMap[$tagName] = new NfeTag($child);
-            }
-
-            // Continua a mapear recursivamente
-            $this->mapTags($child, $currentPath);
+            // Salva no banco
+            $emitenteModel->save($dados);
+        } else {
+            throw new Exception("Tag Emitente não encontrada no XML.");
         }
     }
-
+    
     /**
-     * Método mágico __get para acessar qualquer tag do XML dinamicamente
+     * Extrai uma parte específica do XML com XPath
+     * @param string $tag Nome da tag que será extraída
+     * @return string|null XML correspondente à tag ou null se não encontrado
      */
-    public function __get($name)
+    private function extractXmlPart($tag)
     {
-        // Verifica se a tag está mapeada
-        if (isset($this->tagMap[$name])) {
-            return $this->tagMap[$name];
+        // Executa a consulta XPath para a tag
+        $element = $this->xml->xpath("//{$tag}");
+        
+        // Verifica se encontrou pelo menos um elemento
+        if (!empty($element)) {
+            return $element[0]->asXML();  // Retorna o XML da primeira ocorrência
         }
-
-        // Caso a tag não exista, retorna uma instância da NfeTag com mensagem padrão
-        return new NfeTag(null); // Retorna uma tag vazia, ou podemos retornar um aviso
-    }
-
-    /**
-     * Método mágico __call para tratar chamadas de métodos não existentes
-     */
-    public function __call($name, $arguments)
-    {
-        // Se o método não existir, podemos decidir o que retornar.
-        return "Método '{$name}' não encontrado na classe Nfe.";
-    }
-}
-
-/**
- * Classe auxiliar para representar uma tag do XML da NFe
- */
-class NfeTag
-{
-    private $content;
-
-    public function __construct($content)
-    {
-        $this->content = $content;
-    }
-
-    /**
-     * Retorna o conteúdo da tag
-     * - Se for um valor simples, retorna o valor.
-     * - Se tiver subelementos, retorna um array associativo dos elementos filhos.
-     */
-    public function getContent()
-    {
-        if ($this->content === null) {
-            return "dado não existe no XML";
-        }
-
-        if ($this->content->count() > 0) {
-            $result = [];
-            $childCount = [];
-
-            foreach ($this->content->children() as $child) {
-                $childName = $child->getName();
-
-                // Se não existe contador, inicializamos
-                if (!isset($childCount[$childName])) {
-                    $childCount[$childName] = 0;
-                }
-                $childCount[$childName]++;
-
-                // Lógica para múltiplas ocorrências
-                if ($childCount[$childName] > 1) {
-                    if (!isset($result[$childName]) || !is_array($result[$childName])) {
-                        $result[$childName] = [$result[$childName]] ?? [];
-                    }
-                    $result[$childName][] = (new NfeTag($child))->getContent();
-                } else {
-                    $result[$childName] = (new NfeTag($child))->getContent();
-                }
-            }
-
-            return $result;
-        }
-
-        // Para elementos simples (sem filhos)
-        return (string)$this->content;
-    }
-
-
-    /**
-     * Retorna uma subtag específica, se existir
-     * Se a subtag não for encontrada, retorna "dado não existe no XML"
-     */
-    public function __get($name)
-    {
-        if (isset($this->content->$name)) {
-            return new NfeTag($this->content->$name);
-        }
-
-        // Retorno de valor nulo quando a subtag não é encontrada
-        return new NfeTag(null); // Retorna uma tag vazia ou mensagem padrão
-    }
-
-    /**
-     * Método mágico __call para tratar chamadas de métodos não existentes nas tags
-     */
-    public function __call($name, $arguments)
-    {
-        // Se o método não existir na tag, podemos decidir o que retornar.
-        return "Método '{$name}' não encontrado na tag.";
+        
+        return null;  // Retorna null caso não encontre
     }
 }

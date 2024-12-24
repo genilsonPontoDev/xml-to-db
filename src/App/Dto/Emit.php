@@ -2,23 +2,44 @@
 
 namespace App\Dto;
 
-class Emit {
+class Emit
+{
     public $CNPJ;
     public $xNome;
     public $enderEmit;
 
-    public function __construct($xmlString)
+    public function __construct($emitXmlString)
     {
-        $xml = $this->parseXml($xmlString);        
-        $this->CNPJ = $xml->infNFe->emit->CNPJ ?? null;
-        //$this->CNPJ = $this->setCNPJ($xml->infNFe->emit->CNPJ);
+        if (empty($emitXmlString)) {
+            throw new \Exception("Emitente não encontrado no XML.");
+        }
+
+        $xml = simplexml_load_string($emitXmlString);
+
+        // Extrair diretamente os dados do XML
+        $this->CNPJ = (string) $xml->CNPJ;
+        $this->xNome = (string) $xml->Nome;
+
+        // Tratamento do Endereço
+        $this->enderEmit = $this->parseEnderEmit($xml->Endereco ?? null);
     }
 
-    public function parseXml ($xml) {
-        return simplexml_load_string($xml);
-    }
+    /**
+     * Mapeia os dados do endereço do emitente
+     */
+    private function parseEnderEmit($enderEmitXml)
+    {
+        if (!$enderEmitXml) {
+            return [];
+        }
 
-    public function setCNPJ () {
-        
+        return [
+            'xLgr' => (string)($enderEmitXml->Logradouro ?? ''),
+            'nro' => (string)($enderEmitXml->Numero ?? ''),
+            'xBairro' => (string)($enderEmitXml->Bairro ?? ''),
+            'CEP' => (string)($enderEmitXml->CEP ?? ''),
+            'xCidade' => (string)($enderEmitXml->Cidade ?? ''),
+            'xEstado' => (string)($enderEmitXml->Estado ?? ''),
+        ];
     }
 }

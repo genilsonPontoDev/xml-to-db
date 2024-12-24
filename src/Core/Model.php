@@ -28,6 +28,7 @@ class Model
     public function connect()
     {
         try {
+            var_dump($this->db_type); die();
             if ($this->db_type == 'mysql') {
                 $dsn = "mysql:host={$this->db_host};dbname={$this->db_name}";
                 $this->pdo = new \PDO($dsn, $this->db_user, $this->db_pass);
