@@ -61,7 +61,7 @@ class Getxml
         try {
             $result = $this->s3->getObject(['Bucket' => $bucketName, 'Key' => $key]);
             $xmlContent = (string) $result['Body'];              
-            var_dump($xmlContent);
+            //var_dump($xmlContent);
             $this->parseXml($xmlContent, $key);
         } catch (AwsException $e) {
             echo "Erro ao processar o arquivo {$key} no bucket {$bucketName}: " . $e->getMessage() . "<br>";

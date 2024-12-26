@@ -11,35 +11,45 @@ class Nfe
     public $emit;
 
     public function __construct($xmlContent)
-    {        
+    {
         if (empty($xmlContent)) {
             throw new Exception("XML vazio ou inválido.");
         }
         
         // Carrega o XML e valida se é bem formado
-        $this->xml = simplexml_load_string($xmlContent);
+        $this->xml = $xmlContent;
         
         if (!$this->xml) {
             throw new Exception("Erro ao processar o XML.");
         }
         
         // Extrai a parte do XML relacionada ao Emitente
-        $emitXml = $this->extractXmlPart('Emitente');
-        
+        $emitXml = $this->extractXmlPart('emit');
+
         if ($emitXml) {
             $this->emit = new Emit($emitXml);        
 
             // Passa os dados para a Model Emitente
             $emitenteModel = new Emitente();
+            
+            // Mapeia todos os dados de Emitente
             $dados = [
-                'nome' => $this->emit->xNome,
-                'cnpj' => $this->emit->CNPJ,
-                'logradouro' => $this->emit->enderEmit['xLgr'],
-                'numero' => $this->emit->enderEmit['nro'],
-                'bairro' => $this->emit->enderEmit['xBairro'],
-                'cidade' => $this->emit->enderEmit['xCidade'],
-                'estado' => $this->emit->enderEmit['xEstado'],
-                'cep' => $this->emit->enderEmit['CEP']
+                'CNPJ' => $this->emit->CNPJ,
+                'xNome' => $this->emit->xNome,
+                'xFant' => $this->emit->xFant,
+                'xLgr' => $this->emit->enderEmit['xLgr'],
+                'nro' => $this->emit->enderEmit['nro'],
+                'xCpl' => $this->emit->enderEmit['xCpl'],
+                'xBairro' => $this->emit->enderEmit['xBairro'],
+                'cMun' => $this->emit->enderEmit['cMun'],
+                'xMun' => $this->emit->xMun,
+                'UF' => $this->emit->UF,
+                'CEP' => $this->emit->CEP,
+                'cPais' => $this->emit->cPais,
+                'xPais' => $this->emit->xPais,
+                'fone' => $this->emit->fone,
+                'IE' => $this->emit->IE,
+                'CRT' => $this->emit->CRT
             ];
 
             // Salva no banco
@@ -55,7 +65,7 @@ class Nfe
      * @return string|null XML correspondente à tag ou null se não encontrado
      */
     private function extractXmlPart($tag)
-    {
+    {        
         // Executa a consulta XPath para a tag
         $element = $this->xml->xpath("//{$tag}");
         
