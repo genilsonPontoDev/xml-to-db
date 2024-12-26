@@ -4,6 +4,9 @@ require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/src/Core/bootstrap.php';
 require __DIR__ . '/src/App/Dto/Getxml.php';
 
+use Core\Env;
+Env::load();
+
 use App\Dto\Getxml;
 
 // Configurações do S3/MinIO

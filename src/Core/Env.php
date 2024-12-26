@@ -5,8 +5,8 @@ namespace Core;
 class Env
 {
     public static function get($key, $defaultValue = null)
-    {
-        $envFile = __DIR__ . '/../.env';
+    {        
+        $envFile = __DIR__ . '/../../.env';
         if (file_exists($envFile)) {
             $envContent = file_get_contents($envFile);
             $lines = explode("\n", $envContent);
@@ -25,7 +25,7 @@ class Env
     }
 
     public static function load() {
-        $envFile = __DIR__ . '/../.env';
+        $envFile = __DIR__ . '/../../.env';
         if (file_exists($envFile)) {
             $envContent = file_get_contents($envFile);
             $lines = explode("\n", $envContent);

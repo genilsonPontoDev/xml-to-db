@@ -2,7 +2,6 @@ src/upload/aprocessar/**
 src/upload/naoprocessado/**
 src/upload/processado/**
 
-xmltodb.db
 dump-teste.sql
 dump-sqlite.sql
 dump-sqlite-nf-tables.sql

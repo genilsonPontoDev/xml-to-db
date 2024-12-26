@@ -15,7 +15,7 @@ class Model
     private $db_port;
 
     public function __construct()
-    {
+    {        
         $this->db_type = $_ENV['POSTGRES_DB_TYPE'];
         $this->db_host = $_ENV['POSTGRES_HOST'];
         $this->db_name = $_ENV['POSTGRES_DB'];
@@ -27,8 +27,7 @@ class Model
 
     public function connect()
     {
-        try {
-            var_dump($this->db_type); die();
+        try {            
             if ($this->db_type == 'mysql') {
                 $dsn = "mysql:host={$this->db_host};dbname={$this->db_name}";
                 $this->pdo = new \PDO($dsn, $this->db_user, $this->db_pass);
@@ -36,7 +35,7 @@ class Model
                 $dsn = "pgsql:host={$this->db_host};port={$this->db_port};dbname={$this->db_name}";
                 $this->pdo = new \PDO($dsn, $this->db_user, $this->db_pass);
             } elseif ($this->db_type == 'sqlite') {
-                $db_file = __DIR__ . '/../' . $this->db_name;
+                $db_file = __DIR__ . '/../../' . $this->db_name;
                 $dsn = "sqlite:$db_file";
                 $this->pdo = new \PDO($dsn);
             } else {

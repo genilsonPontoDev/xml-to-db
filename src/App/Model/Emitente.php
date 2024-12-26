@@ -53,7 +53,7 @@ class Emitente extends Model
             // Se existe um idEmitente, atualiza, caso contrário insere um novo
             if ($this->idEmitente) {
                 return $this->update('Emitente', $dados, 'idEmitente = :idEmitente', ['idEmitente' => $this->idEmitente]);
-            } else {
+            } else {                
                 return $this->insert('Emitente', $dados);
             }
         } catch (\Exception $e) {
