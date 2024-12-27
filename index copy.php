@@ -1,23 +1,13 @@
 <?php
 
-/* require __DIR__ . '/vendor/autoload.php';
-require __DIR__ . '/src/Core/bootstrap.php';
-
-Router::post('/', ['App\UseCase\SaveNfe', 'register']); */
-
-
-
-
-
-
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/src/Core/bootstrap.php';
-require __DIR__ . '/src/App/DTO/Getxml.php';
+require __DIR__ . '/src/App/Dto/Getxml.php';
 
 use Core\Env;
 Env::load();
 
-use App\DTO\Getxml;
+use App\Dto\Getxml;
 
 // Configurações do S3/MinIO
 $config = [
@@ -35,4 +25,4 @@ $config = [
 ];
 
 $getxml = new Getxml($config);
-$getxml->list();
+$getxml->processBuckets();
