@@ -32,9 +32,9 @@ class Bucket
     public function list()
     {
         try {
-            $buckets = $this->s3->listBuckets();              
-            foreach ($buckets['Buckets'] as $bucket) {                          
-                $this->processBucket($bucket['Name']);
+            $buckets = $this->s3->listBuckets();            
+            foreach ($buckets['Buckets'] as $bucket) {                 
+                $this->processBucket($bucket['Name']);                
                 return $this->xmlContent;
             }
         } catch (AwsException $e) {
@@ -47,9 +47,8 @@ class Bucket
         try {
             $objects = $this->s3->listObjects(['Bucket' => $bucketName]);            
             
-            if (isset($objects['Contents']) && count($objects['Contents']) > 0) {
-                foreach ($objects['Contents'] as $object) {                                        
-                    var_dump($object['Key']); 
+            if (isset($objects['Contents']) && count($objects['Contents']) > 0) {                
+                foreach ($objects['Contents'] as $object) { 
                     $this->processFile($bucketName, $object['Key']);
                 }
             } else {
@@ -64,8 +63,8 @@ class Bucket
     {        
         try {
             $result = $this->s3->getObject(['Bucket' => $bucketName, 'Key' => $key]);            
-            $this->xmlContent = (string) $result['Body'];                     
-        } catch (AwsException $e) {            
+            $this->xmlContent[] = [$key => [(string) $result['Body']]];            
+        } catch (AwsException $e) {
             return  "Erro ao processar o arquivo {$key} no bucket {$bucketName}: " . $e->getMessage() . "<br>";
         }
     }

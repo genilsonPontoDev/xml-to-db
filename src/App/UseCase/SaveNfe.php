@@ -21,10 +21,22 @@ class SaveNfe
         $this->config = $config;
     }
 
-    function getXml(): string
+    function getXmlList()
     {
         $bucket = new Bucket($this->config);        
-        return ($bucket->list()) ?? "";
+        return ($bucket->list()) ?? [];        
+    }
+    function getXml(): string
+    {        
+        $xmlList = $this->getXmlList();
+        foreach ($xmlList as $xml) {
+            $fileName = array_keys($xml)[0];
+            $nf = $xml[$fileName][0];    
+            $xml = simplexml_load_string($nf);
+            $xml->addChild('file', $fileName);
+            $nf = $xml->asXML();            
+            return $nf ?? "";
+        }        
     }
 
     function saveEmit($xml): DtoEmitente
@@ -52,7 +64,7 @@ class SaveNfe
         return $model->save();
     }
 
-    function registerResponse($notaSaved, $emitSaved, $destSaved, $prodSaved)
+    function registerResponse($notaSaved, $emitSaved, $destSaved, $prodSaved, $fileSaved)
     {
         try {
             $mensagem = '';
@@ -68,10 +80,11 @@ class SaveNfe
                 "numeroNota" => $notaSaved,
                 "emitente" => $emitSaved,
                 "destinatario" => $destSaved,
-                "produto" => $prodSaved
+                "produto" => $prodSaved,
+                "arquivo" => $fileSaved
             ];
 
-            
+            header('Content-Type: application/json');
             echo json_encode($response);
         } catch (Exception $e) {
             
@@ -92,9 +105,9 @@ class SaveNfe
     }
  */
     function register()
-    {
-        $xml = $this->getXml();
-        $xml = ReadXml::parse($xml);
+    {        
+        $xml = $this->getXml();        
+        $xml = ReadXml::parse($xml);         
         $IDEmitente = $this->saveEmit($xml);
         $IDDestinatario = $this->saveDest($xml);
         $IDNota = $this->saveNota($xml);
@@ -102,8 +115,9 @@ class SaveNfe
         $notaSaved = $IDNota->cNF;
         $emitSaved = $IDEmitente->cnpj;
         $destSaved = $IDDestinatario->cnpj;
-        $prodSaved = $IDItensNota->xProd;
-        $this->registerResponse($notaSaved, $emitSaved, $destSaved, $prodSaved);
+        $prodSaved = $IDItensNota->xProd; 
+        $fileSaved = (string) $xml->file;
+        $this->registerResponse($notaSaved, $emitSaved, $destSaved, $prodSaved, $fileSaved);
 
         /* $ID = $this->emitNfe($ID, $xml);
         $ID = $this->destNfe($ID, $xml);
