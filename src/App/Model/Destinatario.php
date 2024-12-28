@@ -22,34 +22,32 @@ class Destinatario extends Model
 
         $data = [
             'tipo_usuario' => 'dest',
-            'CNPJ' => $this->dto->cnpj, // Corrigido
-            'xNome' => $this->dto->nome, // Corrigido
-            'xFant' => $this->dto->nomeFantasia, // Corrigido
-            'xLgr' => $this->dto->logradouro, // Corrigido
-            'nro' => $this->dto->numero, // Corrigido
-            'xCpl' => $this->dto->complemento, // Corrigido
-            'xBairro' => $this->dto->bairro, // Corrigido
-            'cMun' => $this->dto->codigoMunicipio, // Corrigido
-            'xMun' => $this->dto->nomeMunicipio, // Corrigido
-            'UF' => $this->dto->uf, // Corrigido
-            'CEP' => $this->dto->cep, // Corrigido
-            'cPais' => $this->dto->codigoPais, // Corrigido
-            'xPais' => $this->dto->nomePais, // Corrigido
-            'fone' => $this->dto->telefone, // Corrigido
-            'IE' => $this->dto->inscricaoEstadual, // Corrigido
-            'CRT' => $this->dto->crt, // Corrigido
+            'CNPJ' => $this->dto->cnpj,
+            'xNome' => $this->dto->nome,
+            'xFant' => $this->dto->nomeFantasia,
+            'xLgr' => $this->dto->logradouro,
+            'nro' => $this->dto->numero,
+            'xCpl' => $this->dto->complemento,
+            'xBairro' => $this->dto->bairro,
+            'cMun' => $this->dto->codigoMunicipio,
+            'xMun' => $this->dto->nomeMunicipio,
+            'UF' => $this->dto->uf,
+            'CEP' => $this->dto->cep,
+            'cPais' => $this->dto->codigoPais,
+            'xPais' => $this->dto->nomePais,
+            'fone' => $this->dto->telefone,
+            'IE' => $this->dto->inscricaoEstadual,
+            'CRT' => $this->dto->crt,
         ];
 
-        if ($exists) {
-            var_dump('atualiza');
+        if ($exists) {            
             $this->update(
                 $this->table,
                 $data,
                 'id_usuario = :ID',
                 [':ID' => $this->dto->id]
             );
-        } else {
-            var_dump('insere');
+        } else {            
             $this->insert($this->table, $data);
         }
 

@@ -2,7 +2,7 @@
 
 namespace App\Dto;
 
-use App\Model\Emitente;  // Importa a model Emitente
+use App\Model\Emitente;
 use Exception;
 
 class Nfe
@@ -15,24 +15,20 @@ class Nfe
         if (empty($xmlContent)) {
             throw new Exception("XML vazio ou inválido.");
         }
-        
-        // Carrega o XML e valida se é bem formado
+                
         $this->xml = $xmlContent;
         
         if (!$this->xml) {
             throw new Exception("Erro ao processar o XML.");
         }
-        
-        // Extrai a parte do XML relacionada ao Emitente
+                
         $emitXml = $this->extractXmlPart('emit');
 
         if ($emitXml) {
             $this->emit = new Emit($emitXml);        
-
-            // Passa os dados para a Model Emitente
-            $emitenteModel = new Emitente();
             
-            // Mapeia todos os dados de Emitente
+            $emitenteModel = new Emitente();
+                        
             $dados = [
                 'CNPJ' => $this->emit->CNPJ,
                 'xNome' => $this->emit->xNome,
@@ -51,8 +47,7 @@ class Nfe
                 'IE' => $this->emit->IE,
                 'CRT' => $this->emit->CRT
             ];
-
-            // Salva no banco
+            
             $emitenteModel->save($dados);
         } else {
             throw new Exception("Tag Emitente não encontrada no XML.");
@@ -66,14 +61,12 @@ class Nfe
      */
     private function extractXmlPart($tag)
     {        
-        // Executa a consulta XPath para a tag
         $element = $this->xml->xpath("//{$tag}");
-        
-        // Verifica se encontrou pelo menos um elemento
+          
         if (!empty($element)) {
-            return $element[0]->asXML();  // Retorna o XML da primeira ocorrência
+            return $element[0]->asXML();
         }
         
-        return null;  // Retorna null caso não encontre
+        return null;
     }
 }

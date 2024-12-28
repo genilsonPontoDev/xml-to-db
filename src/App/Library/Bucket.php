@@ -32,8 +32,8 @@ class Bucket
     public function list()
     {
         try {
-            $buckets = $this->s3->listBuckets();            
-            foreach ($buckets['Buckets'] as $bucket) {                
+            $buckets = $this->s3->listBuckets();              
+            foreach ($buckets['Buckets'] as $bucket) {                          
                 $this->processBucket($bucket['Name']);
                 return $this->xmlContent;
             }
@@ -45,11 +45,11 @@ class Bucket
     private function processBucket($bucketName)
     {
         try {
-            $objects = $this->s3->listObjects(['Bucket' => $bucketName]);
+            $objects = $this->s3->listObjects(['Bucket' => $bucketName]);            
             
             if (isset($objects['Contents']) && count($objects['Contents']) > 0) {
-                foreach ($objects['Contents'] as $object) {                    
-                    //var_dump($objects['Contents'][0]); die();
+                foreach ($objects['Contents'] as $object) {                                        
+                    var_dump($object['Key']); 
                     $this->processFile($bucketName, $object['Key']);
                 }
             } else {

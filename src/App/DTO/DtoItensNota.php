@@ -31,19 +31,14 @@ class DtoItensNota
     public $CST_COFINS;
     public $vBC_COFINS;
     public $pCOFINS;
-    public $vCOFINS;
-
-    // Novos campos
+    public $vCOFINS;    
     public $modBC;
     public $vBC_ICMS;
     public $pICMS;
     public $vICMS;
 
     public function __construct($xmlItem)
-    {
-        // Acessando os campos do XML com os caminhos completos
-
-        // Informações do item
+    {        
         $this->nItem = (string) $xmlItem->NFe->infNFe->det->nItem ?? null;
         $this->cProd = (string) $xmlItem->NFe->infNFe->det->prod->cProd ?? null;
         $this->cEAN = (string) $xmlItem->NFe->infNFe->det->prod->cEAN ?? null;

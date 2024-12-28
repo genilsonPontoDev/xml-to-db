@@ -4,24 +4,24 @@ namespace App\DTO;
 
 class DtoEmitente
 {
-    public $id;                // ID do emitente (se aplicável)
-    public $tipoUsuario;       // Tipo de usuário ("emitente")
-    public $cnpj;              // CNPJ do emitente
-    public $nome;              // Razão social
-    public $nomeFantasia;      // Nome fantasia
-    public $logradouro;        // Logradouro
-    public $numero;            // Número
-    public $complemento;       // Complemento
-    public $bairro;            // Bairro
-    public $codigoMunicipio;   // Código do município
-    public $nomeMunicipio;     // Nome do município
-    public $uf;                // Unidade Federativa
-    public $cep;               // CEP
-    public $codigoPais;        // Código do país
-    public $nomePais;          // Nome do país
-    public $telefone;          // Telefone
-    public $inscricaoEstadual; // Inscrição Estadual
-    public $crt;               // Código de Regime Tributário
+    public $id;
+    public $tipoUsuario;
+    public $cnpj;
+    public $nome;
+    public $nomeFantasia;
+    public $logradouro;
+    public $numero;
+    public $complemento;
+    public $bairro;
+    public $codigoMunicipio;
+    public $nomeMunicipio;
+    public $uf;
+    public $cep;
+    public $codigoPais;
+    public $nomePais;
+    public $telefone;
+    public $inscricaoEstadual;
+    public $crt;
 
     public function __construct($xml)
     {
