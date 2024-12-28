@@ -8,7 +8,6 @@ Router::post('/', ['App\UseCase\SaveNfe', 'register']); */
 
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/src/Core/bootstrap.php';
-require __DIR__ . '/src/App/DTO/Getxml.php';
 
 use Core\Env;
 Env::load();

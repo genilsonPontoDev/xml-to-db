@@ -3,7 +3,6 @@ namespace App\UseCase;
 
 use App\Library\Bucket;
 use App\Library\ReadXml;
-use App\Model\Nfe;
 use App\Model\Emitente;
 use App\Model\Destinatario;
 use App\Model\Nota;
