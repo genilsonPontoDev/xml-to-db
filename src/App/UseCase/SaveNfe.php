@@ -5,7 +5,13 @@ use App\Library\Bucket;
 use App\Library\ReadXml;
 use App\Model\Nfe;
 use App\Model\Emitente;
+use App\Model\Destinatario;
+use App\Model\Nota;
+use App\Model\ItensNota;
 use App\DTO\DtoEmitente;
+use App\DTO\DtoDestinatario;
+use App\DTO\DtoNota;
+use App\DTO\DtoItensNota;
 
 class SaveNfe {
 
@@ -24,6 +30,21 @@ class SaveNfe {
         $model = new Emitente($emit);             
         return $model->save();
     }
+    function saveDest($xml): DtoDestinatario {        
+        $dest = new DtoDestinatario($xml);
+        $model = new Destinatario($dest);             
+        return $model->save();
+    }
+    function saveNota($xml): DtoNota {        
+        $nota = new DtoNota($xml);
+        $model = new Nota($nota);        
+        return $model->save();
+    }
+    function saveItensNota($xml): DtoItensNota {        
+        $itensNota = new DtoItensNota($xml);
+        $model = new ItensNota($itensNota);        
+        return $model->save();
+    }
 
     /* function saveNfe($xml) {
         $dto = new dtoNFE();
@@ -32,9 +53,12 @@ class SaveNfe {
     }
  */
     function register() {
-        $xml = $this->getXml();
-        $xml = ReadXml::parse($xml);        
+        $xml = $this->getXml();        
+        $xml = ReadXml::parse($xml);
         $IDEmitente = $this->saveEmit($xml);      
+        $IDDestinatario = $this->saveDest($xml);      
+        $IDNota = $this->saveNota($xml);  
+        $IDItensNota = $this->saveItensNota($xml);        
 
         /* $ID = $this->emitNfe($ID, $xml);
         $ID = $this->destNfe($ID, $xml);

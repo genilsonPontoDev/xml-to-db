@@ -1,91 +1,63 @@
 <?php
 
-namespace App\Models;
+namespace App\Model;
 
+use App\DTO\DtoDestinatario;
 use Core\Model;
 
 class Destinatario extends Model
 {
-    private $idDestinatario;
-    private $nome;
-    private $cpf;
-    private $logradouro;
-    private $numero;
-    private $bairro;
-    private $cidade;
-    private $estado;
-    private $cep;
+    public $table = 'usuario_nota';
+    public $dto;
 
-    public function __construct($idDestinatario = null, $nome = '', $cpf = '', $logradouro = '', $numero = '', $bairro = '', $cidade = '', $estado = '', $cep = '')
+    public function __construct(DtoDestinatario $destinatario)
     {
         parent::__construct();
-        if ($idDestinatario !== null) {
-            $this->idDestinatario = $idDestinatario;
-        }
-        $this->nome = $nome;
-        $this->cpf = $cpf;
-        $this->logradouro = $logradouro;
-        $this->numero = $numero;
-        $this->bairro = $bairro;
-        $this->cidade = $cidade;
-        $this->estado = $estado;
-        $this->cep = $cep;
+        $this->dto = $destinatario;
     }
 
-    // Método para inserir um novo Destinatario
-    public function save()
+    public function save(): DtoDestinatario
     {
-        try {
-            $data = [
-                'nome' => $this->nome,
-                'cpf' => $this->cpf,
-                'logradouro' => $this->logradouro,
-                'numero' => $this->numero,
-                'bairro' => $this->bairro,
-                'cidade' => $this->cidade,
-                'estado' => $this->estado,
-                'cep' => $this->cep
-            ];
+        $exists = $this->exists();
 
-            if ($this->idDestinatario) {
-                // Atualizar um Destinatario existente
-                return $this->update('Destinatario', $data, 'idDestinatario = :idDestinatario', ['idDestinatario' => $this->idDestinatario]);
-            } else {
-                // Inserir um novo Destinatario
-                return $this->insert('Destinatario', $data);
-            }
-        } catch (\Exception $e) {
-            throw new \Exception("Erro ao salvar Destinatario: " . $e->getMessage());
+        $data = [
+            'tipo_usuario' => 'dest',
+            'CNPJ' => $this->dto->cnpj, // Corrigido
+            'xNome' => $this->dto->nome, // Corrigido
+            'xFant' => $this->dto->nomeFantasia, // Corrigido
+            'xLgr' => $this->dto->logradouro, // Corrigido
+            'nro' => $this->dto->numero, // Corrigido
+            'xCpl' => $this->dto->complemento, // Corrigido
+            'xBairro' => $this->dto->bairro, // Corrigido
+            'cMun' => $this->dto->codigoMunicipio, // Corrigido
+            'xMun' => $this->dto->nomeMunicipio, // Corrigido
+            'UF' => $this->dto->uf, // Corrigido
+            'CEP' => $this->dto->cep, // Corrigido
+            'cPais' => $this->dto->codigoPais, // Corrigido
+            'xPais' => $this->dto->nomePais, // Corrigido
+            'fone' => $this->dto->telefone, // Corrigido
+            'IE' => $this->dto->inscricaoEstadual, // Corrigido
+            'CRT' => $this->dto->crt, // Corrigido
+        ];
+
+        if ($exists) {
+            var_dump('atualiza');
+            $this->update(
+                $this->table,
+                $data,
+                'id_usuario = :ID',
+                [':ID' => $this->dto->id]
+            );
+        } else {
+            var_dump('insere');
+            $this->insert($this->table, $data);
         }
+
+        return $this->dto;
     }
 
-    // Método para buscar um Destinatario por ID
-    public function findById($idDestinatario)
-    {
-        try {
-            return $this->find('Destinatario', 'idDestinatario = :idDestinatario', ['idDestinatario' => $idDestinatario]);
-        } catch (\Exception $e) {
-            throw new \Exception("Erro ao buscar Destinatario: " . $e->getMessage());
-        }
-    }
-
-    // Método para listar todos os Destinatarios
-    public function findAll($page = 1, $itemsPerPage = 100)
-    {
-        try {
-            return $this->paginate('Destinatario', 'idDestinatario', $page, $itemsPerPage);
-        } catch (\Exception $e) {
-            throw new \Exception("Erro ao listar Destinatarios: " . $e->getMessage());
-        }
-    }
-
-    // Método para excluir um Destinatario
-    public function deleteById($idDestinatario)
-    {
-        try {
-            return $this->delete('Destinatario', 'idDestinatario = :idDestinatario', ['idDestinatario' => $idDestinatario]);
-        } catch (\Exception $e) {
-            throw new \Exception("Erro ao excluir Destinatario: " . $e->getMessage());
-        }
+    public function exists(): bool
+    {        
+        return count($this->select($this->table, 'id_usuario = :ID', [':ID' => $this->dto->id])) > 0;
     }
 }
