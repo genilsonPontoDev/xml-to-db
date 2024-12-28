@@ -1,13 +1,16 @@
 <?php
-namespace App\Dto;
+namespace App\Library;
 
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
+use App\Dto\Nfe;
 use SimpleXMLElement;
 
 class Bucket
 {
     private $s3;
+    private $config;
+    public $xmlContent;
 
     public function __construct($config)
     {
@@ -26,25 +29,27 @@ class Bucket
         ]);
     }
 
-    public function processBuckets()
+    public function list()
     {
         try {
-            $buckets = $this->s3->listBuckets();
-            foreach ($buckets['Buckets'] as $bucket) {
+            $buckets = $this->s3->listBuckets();            
+            foreach ($buckets['Buckets'] as $bucket) {                
                 $this->processBucket($bucket['Name']);
+                return $this->xmlContent;
             }
         } catch (AwsException $e) {
             $this->handleError($e);
-        }
+        }        
     }
 
     private function processBucket($bucketName)
     {
         try {
             $objects = $this->s3->listObjects(['Bucket' => $bucketName]);
-                           
+            
             if (isset($objects['Contents']) && count($objects['Contents']) > 0) {
-                foreach ($objects['Contents'] as $object) {  
+                foreach ($objects['Contents'] as $object) {                    
+                    //var_dump($objects['Contents'][0]); die();
                     $this->processFile($bucketName, $object['Key']);
                 }
             } else {
@@ -56,15 +61,15 @@ class Bucket
     }
 
     private function processFile($bucketName, $key)
-    {
+    {        
         try {
-            $result = $this->s3->getObject(['Bucket' => $bucketName, 'Key' => $key]);
-            $xmlContent = (string) $result['Body'];              
-            return $xmlContent;
-        } catch (AwsException $e) {
-            echo "Erro ao processar o arquivo {$key} no bucket {$bucketName}: " . $e->getMessage() . "<br>";
+            $result = $this->s3->getObject(['Bucket' => $bucketName, 'Key' => $key]);            
+            $this->xmlContent = (string) $result['Body'];                     
+        } catch (AwsException $e) {            
+            return  "Erro ao processar o arquivo {$key} no bucket {$bucketName}: " . $e->getMessage() . "<br>";
         }
     }
+
 
     private function handleError(AwsException $e)
     {
