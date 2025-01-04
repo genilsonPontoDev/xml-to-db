@@ -26,6 +26,7 @@ class SaveNfe
         $bucket = new Bucket($this->config);        
         return ($bucket->list()) ?? [];        
     }
+
     function getXml(): string
     {        
         $xmlList = $this->getXmlList();
@@ -45,18 +46,21 @@ class SaveNfe
         $model = new Emitente($emit);
         return $model->save();
     }
+
     function saveDest($xml): DtoDestinatario
     {
         $dest = new DtoDestinatario($xml);
         $model = new Destinatario($dest);
         return $model->save();
     }
+
     function saveNota($xml): DtoNota
     {
         $nota = new DtoNota($xml);
         $model = new Nota($nota);
         return $model->save();
     }
+
     function saveItensNota($xml): DtoItensNota
     {
         $itensNota = new DtoItensNota($xml);
@@ -111,7 +115,7 @@ class SaveNfe
         $IDEmitente = $this->saveEmit($xml);
         $IDDestinatario = $this->saveDest($xml);
         $IDNota = $this->saveNota($xml);
-        $IDItensNota = $this->saveItensNota($xml);        
+        $IDItensNota = $this->saveItensNota($xml);
         $notaSaved = $IDNota->cNF;
         $emitSaved = $IDEmitente->cnpj;
         $destSaved = $IDDestinatario->cnpj;
