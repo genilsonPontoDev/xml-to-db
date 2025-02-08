@@ -5,4 +5,3 @@ use Core\Response;
 
 global $router;
 global $model;
-

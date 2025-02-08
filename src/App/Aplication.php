@@ -7,8 +7,7 @@ class Aplication {
     }
 
     public function start ()  {         
-        $this->load();
-        $this->index();
+        $this->load();        
     }
 
     public function load () {        

@@ -5,3 +5,9 @@ src/upload/processado/**
 dump-teste.sql
 dump-sqlite.sql
 dump-sqlite-nf-tables.sql
+
+tmpExemplosUse.php
+dump-anderson.sql
+dump-notas.sql
+
+tmp.md
