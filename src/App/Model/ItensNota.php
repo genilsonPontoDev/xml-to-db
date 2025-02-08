@@ -7,65 +7,50 @@ use Core\Model;
 
 class ItensNota extends Model
 {
-    public $table = 'itens_nota';
+    public $table = 'Item'; // Nome correto da tabela
     public $dto;
 
     public function __construct(DtoItensNota $itemNota)
     {
         parent::__construct();
-        $this->dto = $itemNota;        
+        $this->dto = $itemNota;
     }
 
     public function save(): DtoItensNota
     {
+        // Verifique se o idNotaFiscal (idNota) não é nulo ou vazio
+        if (empty($this->dto->idNota)) {
+            throw new \Exception('O campo idNotaFiscal (idNota) é obrigatório e não pode ser nulo.');
+        }
+
         $exists = $this->exists();
 
         $data = [
-            'id_nota' => $this->dto->idNota,
-            'nItem' => $this->dto->nItem,
-            'cProd' => $this->dto->cProd,
-            'cEAN' => $this->dto->cEAN,
-            'xProd' => $this->dto->xProd,
-            'NCM' => $this->dto->NCM,
-            'CFOP' => $this->dto->CFOP,
-            'uCom' => $this->dto->uCom,
-            'qCom' => $this->dto->qCom,
-            'vUnCom' => $this->dto->vUnCom,
-            'vProd' => $this->dto->vProd,
-            'cEANTrib' => $this->dto->cEANTrib,
-            'uTrib' => $this->dto->uTrib,
-            'qTrib' => $this->dto->qTrib,
-            'vUnTrib' => $this->dto->vUnTrib,
-            'indTot' => $this->dto->indTot,
-            'vTotTrib' => $this->dto->vTotTrib,
-            'orig' => $this->dto->orig,
-            'CST_ICMS' => $this->dto->CST_ICMS,
-            'CST_PIS' => $this->dto->CST_PIS,
-            'vBC_PIS' => $this->dto->vBC_PIS,
-            'pPIS' => $this->dto->pPIS,
-            'vPIS' => $this->dto->vPIS,
-            'CST_COFINS' => $this->dto->CST_COFINS,
-            'vBC_COFINS' => $this->dto->vBC_COFINS,
-            'pCOFINS' => $this->dto->pCOFINS,
-            'vCOFINS' => $this->dto->vCOFINS,
+            'idNotaFiscal'  => $this->dto->idNota,    // Campo para idNotaFiscal
+            'numeroItem'    => $this->dto->nItem,     // Número do item na nota
+            'descricao'     => $this->dto->xProd,     // Descrição do produto
+            'quantidade'    => $this->dto->qCom,      // Quantidade
+            'valorUnitario' => $this->dto->vUnCom,    // Valor unitário
+            'valorTotal'    => $this->dto->vProd,     // Valor total
         ];
 
         if ($exists) {
             $this->update(
                 $this->table,
                 $data,
-                'id_item = :ID',
-                [':ID' => $this->dto->idItem]
+                'idItem = :ID', // Ajuste para a chave primária 'idItem'
+                [':ID' => $this->dto->idItem] // Parâmetro de 'idItem'
             );
         } else {
-            $this->insert($this->table, $data);
+            $this->insert($this->table, $data); // Inserir novo registro
         }
 
-        return $this->dto;
+        return $this->dto; // Retorna o DTO com os dados
     }
+
 
     public function exists(): bool
     {
-        return count($this->select($this->table, 'id_item = :ID', [':ID' => $this->dto->idItem])) > 0;
+        return count($this->select($this->table, 'idItem = :ID', [':ID' => $this->dto->idItem])) > 0; // Verifica se o item já existe
     }
 }

@@ -6,8 +6,6 @@ use Aws\Exception\AwsException;
 use App\Dto\Nfe;
 use SimpleXMLElement;
 
-var_dump('Bucket');
-
 class Bucket
 {
     private $s3;

@@ -7,7 +7,7 @@ use Core\Model;
 
 class Destinatario extends Model
 {
-    public $table = 'usuario_nota';
+    public $table = 'destinatario'; // Alterado de usuario_nota para destinatario
     public $dto;
 
     public function __construct(DtoDestinatario $destinatario)
@@ -21,30 +21,21 @@ class Destinatario extends Model
         $exists = $this->exists();
 
         $data = [
-            'tipo_usuario' => 'dest',
-            'CNPJ' => $this->dto->cnpj,
-            'xNome' => $this->dto->nome,
-            'xFant' => $this->dto->nomeFantasia,
-            'xLgr' => $this->dto->logradouro,
-            'nro' => $this->dto->numero,
-            'xCpl' => $this->dto->complemento,
-            'xBairro' => $this->dto->bairro,
-            'cMun' => $this->dto->codigoMunicipio,
-            'xMun' => $this->dto->nomeMunicipio,
-            'UF' => $this->dto->uf,
-            'CEP' => $this->dto->cep,
-            'cPais' => $this->dto->codigoPais,
-            'xPais' => $this->dto->nomePais,
-            'fone' => $this->dto->telefone,
-            'IE' => $this->dto->inscricaoEstadual,
-            'CRT' => $this->dto->crt,
+            'nome'       => $this->dto->nome,
+            'cnpj'        => $this->dto->cnpj,
+            'logradouro' => $this->dto->logradouro,
+            'numero'     => $this->dto->numero,
+            'bairro'     => $this->dto->bairro,
+            'cidade'     => $this->dto->nomeMunicipio, // Mapeando nome do município
+            'estado'     => $this->dto->uf,
+            'cep'        => $this->dto->cep,
         ];
 
         if ($exists) {            
             $this->update(
                 $this->table,
                 $data,
-                'id_usuario = :ID',
+                'idDestinatario = :ID',
                 [':ID' => $this->dto->id]
             );
         } else {            
@@ -56,6 +47,6 @@ class Destinatario extends Model
 
     public function exists(): bool
     {        
-        return count($this->select($this->table, 'id_usuario = :ID', [':ID' => $this->dto->id])) > 0;
+        return count($this->select($this->table, 'idDestinatario = :ID', [':ID' => $this->dto->id])) > 0;
     }
 }

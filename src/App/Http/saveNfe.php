@@ -4,10 +4,19 @@ require_once __DIR__ . '/../../../vendor/autoload.php';
 require_once __DIR__ . '/../../Core/bootstrap.php';
 require_once __DIR__ . '/../../../src/App/UseCase/SaveNfe.php';
 
+use Core\Request;
+use Core\Response;
+use App\help\FactorRouterAll;
+
+global $router;
+global $model;
+
 use Core\Env;
 Env::load();
 
 use App\UseCase\SaveNfe;
+
+global $router;
 
 // Configurações do S3/MinIO
 $config = [
@@ -24,10 +33,8 @@ $config = [
     ]
 ];
 
-$getxml = new SaveNfe($config);
-$getxml->register();
 
-var_dump($getxml);
-
-var_dump("die cycle");
-die();
+$router->get("/nfe/save", function() use ($config) {        
+    $getxml = new SaveNfe($config);    
+    $getxml->register();
+});
