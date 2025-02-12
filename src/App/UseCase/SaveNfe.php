@@ -28,7 +28,7 @@ class SaveNfe
     }
 
     function getXml(): string
-    {        
+    {
         $xmlList = $this->getXmlList();
         foreach ($xmlList as $xml) {
             $fileName = array_keys($xml)[0];

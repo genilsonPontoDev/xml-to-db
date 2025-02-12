@@ -11,14 +11,11 @@ use App\help\FactorRouterAll;
 global $router;
 global $model;
 
-use Core\Env;
-Env::load();
-
 use App\UseCase\SaveNfe;
 
 global $router;
 
-// Configurações do S3/MinIO
+// Configurações do S3/MinIO para o ENV
 $config = [
     'version' => 'latest',
     'region' => 'us-east-1',

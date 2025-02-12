@@ -9,7 +9,7 @@ class FactorRouterAll
 {
     static function add(array $data)
     {        
-        return function (Request $req, Response $res) use ($data) {
+        return function (Request $req, Response $res) use ($data) {            
             $params = [];
             foreach ($data["params"] as $p) {
                 [$param_name, $param_message] = $p;

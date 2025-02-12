@@ -21,7 +21,7 @@ class UserRegister
         $this->email = $data["email"] ?? null;
         $this->password = $data["password"] ?? null;
         $this->cpf = $data["cpf"] ?? null;
-        $this->nick = $data["nick"] ?? null;
+        $this->nick = $data["nick"] ?? "";
         $this->rule_id = $data["rule_id"] ?? null;
         $this->status = $data["status"] ?? null;
         $this->code = $data["code"] ?? null;
@@ -29,7 +29,6 @@ class UserRegister
 
     public function register()
     {        
-        //var_dump('teste');
         $user = new UserModel(); 
         $today = date("Y-m-d H:i:s");         
         $user->create([
